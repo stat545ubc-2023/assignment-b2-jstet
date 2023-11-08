@@ -1,0 +1,16 @@
+Package: pRevalence
+Title: pRevalence
+Version: 0.0.0.9000
+Authors@R: 
+    person("Jonas", "Stettner", email = "mail@example.com", role = c("aut", "cre"))
+Description: This package provides functions related to the prevalence of one categorical variable related to another categorical variable, including calculating and filtering by prevalence.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    magrittr
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

@@ -9,20 +9,20 @@ calculate_prevalence(data, group_var, count_var)
 \arguments{
 \item{data}{A data frame containing the dataset.}
 
-\item{group_var}{The name of the variable used for grouping.}
+\item{group_var}{The column of thecategorical variable used for grouping.}
 
-\item{count_var}{The name of the variable used for counting.}
+\item{count_var}{The column of the categorical variable whose prevalence is to be calculated related to group_var.}
 }
 \value{
-A data frame containing the prevalence calculation, including the group variable, count and proportion.
+A data frame containing the prevalence calculation, including the count var, the count (the number of group_var count_var is represented in) and proportion.
 }
 \description{
 Calculate the prevalence of a categorical variable related to another categorical variable in a dataset.
 }
 \examples{
-library(dplyr)
+library(magrittr)
 data <- data.frame(group_var = c("A", "B", "A", "B"),
-                   count_var = c("F1", "F1", "G1", "G1"))
-filtered_data <- data \%>\% pRevalence::calculate_prevalence(group_var = "group_var", count_var = "count_var")
+                   count_var = c("F1", "G1", "G1", "G1"))
+prevalence <- data \%>\% calculate_prevalence(group_var, count_var )
 
 }

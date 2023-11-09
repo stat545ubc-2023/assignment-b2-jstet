@@ -1,6 +1,6 @@
 Package: pRevalence
 Title: pRevalence
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person("Jonas", "Stettner", email = "mail@example.com", role = c("aut", "cre"))
 Description: This package provides functions related to the prevalence of one categorical variable related to another categorical variable, including calculating and filtering by prevalence.
@@ -12,5 +12,6 @@ Imports:
     dplyr,
     magrittr
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    datateachr
 Config/testthat/edition: 3

@@ -3,40 +3,53 @@
 #' Calculate the prevalence of a categorical variable related to another categorical variable in a dataset.
 #'
 #' @param data A data frame containing the dataset.
-#' @param group_var The name of the variable used for grouping.
-#' @param count_var The name of the variable used for counting.
-#'
-#' @return A data frame containing the prevalence calculation, including the group variable, count and proportion.
+#' @param group_var The column of thecategorical variable used for grouping.
+#' @param count_var The column of the categorical variable whose prevalence is to be calculated related to group_var.
+#' @return A data frame containing the prevalence calculation, including the count var, the count (the number of group_var count_var is represented in) and proportion.
 #'
 #' @examples
-#' library(dplyr)
+#' library(magrittr)
 #' data <- data.frame(group_var = c("A", "B", "A", "B"),
-#'                    count_var = c("F1", "F1", "G1", "G1"))
-#' filtered_data <- data %>% pRevalence::calculate_prevalence(group_var = "group_var", count_var = "count_var")
+#'                    count_var = c("F1", "G1", "G1", "G1"))
+#' prevalence <- data %>% calculate_prevalence(group_var, count_var )
 #'
-#' @importFrom dplyr group_by summarise mutate n 
+#' @importFrom dplyr group_by summarise mutate n enquo quo_name distinct
 #' @importFrom magrittr %>%
+#' @importFrom stats na.omit
 #' @export
 calculate_prevalence <- function(data, group_var, count_var) {
-  # Check if group_var and count_var are valid columns in the dataset
-  if (!(group_var %in% names(data)) || !(count_var %in% names(data))) {
+  gv <- dplyr::enquo(group_var)
+  cv <- dplyr::enquo(count_var)
+
+ gv_name <- dplyr::quo_name(gv)
+ cv_name <- dplyr::quo_name(cv)
+
+   # Check if group_var and count_var are valid columns in the dataset
+  if (!(gv_name %in% names(data)) || !(cv_name %in% names(data))) {
     stop("group_var or count_var is not a valid column in the dataset.")
   }
   
-# Check if group_var and count_var are categorical variables
-if (!is.character(data[[group_var]]) || !is.character(data[[count_var]])) {
-  stop("group_var and count_var must be categorical variables.")
-}
+  # Check if group_var and count_var are categorical variables
+  if (!is.character(data[[gv_name]]) || !is.character(data[[cv_name]])) {
+    stop("group_var and count_var must be categorical variables of type string.")
+    }
 
-unique_count <- length(unique(data$group_var))
+  data <- na.omit(data)
 
+  # check if dataset contains rows
+  if (nrow(data) == 0) {
+    stop("Dataset contains no rows (after removing rows with missing values).")
+  }
+
+unique_count <- data %>% dplyr::distinct(!!gv) %>% nrow()
   
 prevalence <- data %>%
-  dplyr::group_by(group_var, count_var) %>%
-  dplyr::summarize(count = n(), .groups = "drop") %>%
-  dplyr::group_by(count_var) %>%
-  dplyr::summarize(count = n(), proportion = n() / unique_count)
-  
+  dplyr::group_by(!!gv, !!cv) %>%
+  dplyr::summarize(count = dplyr::n(), .groups = "drop") 
+
+prevalence <- prevalence %>%
+  dplyr::group_by(!!cv) %>%
+  dplyr::summarize(count = dplyr::n(), proportion = dplyr::n() / unique_count)
   
   return(as.data.frame(prevalence))
 }
